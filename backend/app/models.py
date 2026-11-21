@@ -8,7 +8,7 @@ These match the assignment API contract exactly — do not rename fields.
 from __future__ import annotations
 
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # ── GET /health ───────────────────────────────────────────────────────────────
@@ -22,8 +22,10 @@ class HealthResponse(BaseModel):
 # ── POST /chat ────────────────────────────────────────────────────────────────
 
 class ChatRequest(BaseModel):
-    session_id: str
-    message: str
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    session_id: str = Field(min_length=1, max_length=128)
+    message: str = Field(min_length=1, max_length=4000)
     system_prompt: Optional[str] = None
 
 

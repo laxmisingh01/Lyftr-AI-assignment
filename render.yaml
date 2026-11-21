@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: lyftr-ai-backend
+    runtime: python
+    plan: 0.5c-512mb
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    disk:
+      name: lyftr-ai-sqlite
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: DATABASE_URL
+        value: sqlite:////var/data/app.db
+      - key: LLM_MODEL
+        value: gpt-4o-mini
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
+      - key: LLM_MAX_OUTPUT_TOKENS
+        value: "2048"
+      - key: CACHE_ENABLED
+        value: "true"
+      - key: ENABLE_FAILURE_SIMULATION
+        value: "true"

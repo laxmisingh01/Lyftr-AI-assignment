@@ -26,6 +26,12 @@ class Settings(BaseSettings):
     gemini_model: str = "gemini-2.5-flash"
     llm_max_output_tokens: int = 2048
 
+    # Comma-separated browser origins allowed to call the API.
+    allowed_origins: str = (
+        "http://localhost:5173,http://127.0.0.1:5173,"
+        "http://localhost:3000,http://127.0.0.1:3000"
+    )
+
     # ── Database ───────────────────────────────────────────────
     # e.g. "sqlite:///./data/app.db"
     database_url: str = "sqlite:///./data/app.db"
@@ -53,6 +59,10 @@ class Settings(BaseSettings):
                 k, v = pair.split("=", 1)
                 result[k.strip()] = v.strip()
         return result
+
+    def parse_allowed_origins(self) -> List[str]:
+        """Parse comma-separated CORS origins from ALLOWED_ORIGINS."""
+        return [origin.strip().rstrip("/") for origin in self.allowed_origins.split(",") if origin.strip()]
 
     def sqlite_path(self) -> str:
         """

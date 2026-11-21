@@ -2,6 +2,13 @@
 
 Lyftr AI is a local chat application with a React/Vite frontend and a FastAPI backend. The backend routes requests through LiteLLM, supports ordered OpenAI/Gemini fallback, stores chat history in SQLite, and can cache responses in memory.
 
+## Live URLs
+
+- Frontend: TODO - add the public deployment URL
+- Backend: TODO - add the public API base URL
+- GitHub: https://github.com/laxmisingh01/Lyftr-AI-assignment
+- Demo video: TODO - add the public 2-3 minute demo link
+
 ## Features
 
 - Chat interface with optional per-session system prompt
@@ -44,9 +51,12 @@ Other settings:
 | `DATABASE_URL` | `sqlite:///./data/app.db` | SQLite database location |
 | `CACHE_ENABLED` | `true` | Enables the in-memory response cache |
 | `ENABLE_FAILURE_SIMULATION` | `false` | Enables the optional provider-failure simulation header |
+| `ALLOWED_ORIGINS` | Local Vite/Docker origins | Comma-separated frontend origins allowed by the backend CORS policy |
 | `VITE_API_PROXY_TARGET` | `http://127.0.0.1:8000` | Backend target for the local Vite proxy |
 
-## Run locally on Windows
+## Run locally: with Docker and without
+
+### Without Docker
 
 From the repository root, create the backend environment and install dependencies:
 
@@ -77,7 +87,7 @@ Open the local URL Vite prints, usually [http://127.0.0.1:5173](http://127.0.0.1
 Backend health: [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)  
 Interactive API docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
-## Run with Docker Compose
+### With Docker Compose
 
 Make sure `.env` is configured, then run from the repository root:
 
@@ -95,6 +105,41 @@ docker compose down
 ```
 
 The SQLite database is stored in the `lyftr_data` Docker volume and remains when containers are stopped with `docker compose down`.
+
+## Design decisions
+
+- **Provider fallback:** `LLM_API_KEYS` keeps provider IDs and values in priority order. The gateway uses each provider's own LiteLLM model identifier and tries the next deployment when one fails.
+- **Response cache:** LiteLLM's in-memory cache avoids repeating the same model request during the process lifetime.
+- **Session storage:** SQLite stores sessions separately from message turns. The Docker setup mounts a named volume so the database survives container recreation.
+- **Per-request metadata:** Each response reports model, latency, input/output tokens, cache/live source, provider key ID, and fallback attempts.
+
+## Verification
+
+Run the backend and frontend checks from the repository root:
+
+```powershell
+.\backend\.venv\Scripts\python.exe -m pytest backend\tests
+Push-Location frontend
+npm test
+npm run build
+Pop-Location
+```
+
+For a live manual check, open `/health`, send two turns in one session, and request the same first-turn prompt in a fresh session to inspect cache metadata. With `ENABLE_FAILURE_SIMULATION=true`, send `X-Simulate-Failure: openai=429` to `/chat` and confirm Gemini answers; `X-Simulate-Failure: *=429` should return 503 without saving the failed turn.
+
+## Setup Used
+
+- Editor: Visual Studio Code
+- AI coding assistant: OpenAI Codex
+- Runtime and tools: Python 3.13, Node.js 22, React, Vite, FastAPI, LiteLLM, SQLite
+- Deployment: Render backend and Vercel frontend (fill in final URLs after deployment)
+
+## Bonus features (if any)
+
+- Mixed OpenAI/Gemini provider fallback
+- Concise-by-default assistant responses with readable Markdown rendering
+- Optional system prompt per conversation session
+- Health and saved-session history endpoints
 
 ## API
 
