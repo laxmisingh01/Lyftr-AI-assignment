@@ -1,0 +1,11 @@
+fastapi>=0.115.5
+uvicorn[standard]>=0.32.1
+pydantic>=2.10.1
+pydantic-settings>=2.6.1
+python-dotenv>=1.0.1
+litellm>=1.55.4
+orjson>=3.11.6,<4.0
+soundfile>=0.12.1,<1.0
+httpx>=0.28.0
+pytest>=8.3.4
+pytest-asyncio>=0.24.0
