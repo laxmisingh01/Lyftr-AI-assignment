@@ -7,7 +7,7 @@ Lyftr AI is a local chat application with a React/Vite frontend and a FastAPI ba
 - Frontend: https://lyftr-ai-assignment-nu.vercel.app/
 - Backend: https://lyftr-ai-assignment-7jok.onrender.comL
 - GitHub: https://github.com/laxmisingh01/Lyftr-AI-assignment
-- Demo video: TODO - add the public 2-3 minute demo link
+- Demo video: https://youtu.be/F-XVykENeWA?si=l29HKrwh7nuB8s09
 
 ## Features
 
